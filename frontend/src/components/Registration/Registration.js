@@ -8,7 +8,6 @@ const Registration = () => {
         name: '',
         email: '',
         password: '',
-       
         bio:''
     });
 

@@ -1,6 +1,9 @@
 const express = require('express')
 const mysql = require('mysql2');
-var cors = require('cors')
+var cors = require('cors');
+
+const { registerUser, getAllUser, getUserById, deleteUserById } = require('./controller/userController');
+const  connection  = require('./dbConfig/db');
 
 
 
@@ -17,60 +20,36 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }))
 
+// Database Connection
 
-//Routers For user
-
-const userRouter = require('./routes/userRoute.js');
-
-app.use('/api/users', userRouter);
+//*******************************************************//
 
 
 
 
+connection.connect((error) => {
+  if (error) throw error;
+  console.log('Successfully connected to the MySQL database');
+});
+
+
+//*******************************************************//
 
 
 
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+    const user = pool.query('SELECT * FROM user');
+    console.log(user);
+
 })
 
-
-
-
-
-
-
-
-
-
-
-
+app.post('/register', registerUser);
+app.get('/users', getAllUser)
+app.get('/user/:id',getUserById)
+app.delete('/user/:id',deleteUserById)
 
 
 app.listen(port, () => {
-  
- 
-
-  console.log(`Example app listening on port ${port}`)
-})
-
-
-
-
-
-/*
-{
-  "name":"Nazim",
-  "userName":"naazim7",
-  "password":"pass",
-  "bio":"I am gullyboy",
-  "proPic":"Apatoto Nai"
-  
-}
-
-
-*/
-
-
-
+    console.log(`Example app listening on port ${port}`)
+});

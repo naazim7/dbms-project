@@ -1,102 +1,82 @@
-const db = require('../models');
-
-//create main model
+const connection = require("../dbConfig/db");
 
 
-const User = db.users;
 
-//Main Work start from here
+const registerUser = (req, res) => {
+const { name, email, password ,bio,proPic} = req.body;
+//console.log(name)
+  const query = `INSERT INTO user (name, email, password,bio,proPic) VALUES ('${name}', '${email}', '${password}','${bio}','${proPic}')`;
 
-
-//id,name,username,password,bio,proPic
-
-//1.Create user 
-const addUser = async (req, res) => {
-    
-    let info = {
-        id: req.body.id,
-        name: req.body.name,
-        username: req.body.username,
-        password: req.body.password,
-        bio: req.body.bio ? req.body.bio : "No bio is added,Please add your bio",
-        proPic: req.body.proPic
-    }
-    try {
- 
-       const user = await User.create(info);
-    
-    res.status(200).send(user);
-    console.log(user);
-} catch (err) {
-  // Handle error
-  console.log("Something is wrong");
+  connection.query(query, (error, result) => {
+    if (error) throw error;
+    console.log(`User ${name} successfully registered`);
+    res.send('User successfully registered');
+  });
 }
 
-    
-    
-    
 
+//*******************************************************//
+
+const getAllUser = (req, res) => {
+    
+ const query = `SELECT * FROM user`;
+
+  connection.query(query, (error, result) => {
+    if (error) throw error;
+      console.log(result);
+      res.send(result)
+    
+  });
 
 
     
 }
 
 
-//2. Get All user API
 
+//*******************************************************//
 
-const getAllUser = async (req, res) => {
-    let users = await User.findAll({});
-    res.status(200).send(users);
+const getUserById = (req, res) => {
+    const id = req.params.id;
+ const query = `SELECT * FROM user where id=${id}`;
 
-
-}
-
-
-//3.Get Single user
-const getSingleUser = async (req, res) => {
-    let id = req.params.id;
-
-    let users = await User.findOne({where:{id:id}});
-    res.status(200).send(user);
-
-
-}
-
-
-//4. Update user
-
-const updateUser = async (req, res) => {
-    let id = req.params.id;
-    const user = await User.update(req.body, { where: { id: id } });
-    res.status(200).send(user);
-   
-
-
-}
-
-//5.Delete User
-
-
-const deleteUser = async (req, res) => {
-    let id = req.params.id;
-    await User.destroy(req.body, { where: { id: id } });
-    res.status(200).send("User is Deleted");
-   
-
-
-}
-
-
-
-
-
-module.exports = {
+  connection.query(query, (error, result) => {
+    if (error) throw error;
+      console.log(result);
+      res.send(result)
     
-    addUser,
+  });
+
+
+    
+}
+
+//*******************************************************//
+
+
+const deleteUserById = (req, res) => {
+    const id = req.params.id;
+ const query = `DELETE  FROM user where id=${id}`;
+
+  connection.query(query, (error, result) => {
+    if (error) throw error;
+      console.log(result);
+      res.send("Deleted Succesfully")
+    
+  });
+
+
+    
+}
+
+
+
+
+
+
+module.exports={
+    registerUser
+    ,
     getAllUser,
-    getSingleUser,
-    updateUser,
-    deleteUser
-
+    getUserById,deleteUserById
 }
